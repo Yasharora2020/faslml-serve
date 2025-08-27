@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastML Serve - Sentiment Analysis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 FastML Serve</h1>
+            <p class="subtitle" id="subtitle">Real-time Sentiment Analysis</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <h2>Analyze Text Sentiment</h2>
+                <div class="input-group">
+                    <textarea 
+                        id="textInput" 
+                        placeholder="Enter your text here... (max 512 characters)"
+                        maxlength="512"
+                    ></textarea>
+                    <div class="char-counter">
+                        <span id="charCount">0</span>/512 characters
+                    </div>
+                </div>
+                <button id="analyzeBtn" class="analyze-btn">
+                    <span class="btn-text">Analyze Sentiment</span>
+                    <span class="btn-loader" style="display: none;">Analyzing...</span>
+                </button>
+            </div>
+
+            <div class="batch-section">
+                <h2>Batch Analysis</h2>
+                <div class="input-group">
+                    <textarea 
+                        id="batchInput" 
+                        placeholder="Enter multiple texts separated by new lines (max 32 texts)"
+                        rows="6"
+                    ></textarea>
+                </div>
+                <button id="batchBtn" class="analyze-btn batch-btn">
+                    <span class="btn-text">Analyze Batch</span>
+                    <span class="btn-loader" style="display: none;">Analyzing...</span>
+                </button>
+            </div>
+
+            <div class="results-section" id="results" style="display: none;">
+                <h2>Results</h2>
+                <div id="resultsContent"></div>
+            </div>
+
+            <div class="stats-section">
+                <h2>API Status</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Service Status</div>
+                        <div class="stat-value" id="serviceStatus">Checking...</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Model</div>
+                        <div class="stat-value" id="modelName">Loading...</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Uptime</div>
+                        <div class="stat-value" id="uptime">-</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

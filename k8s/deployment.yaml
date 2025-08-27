@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastml-serve
+  namespace: fastml-serve
+  labels:
+    app: fastml-serve
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fastml-serve
+  template:
+    metadata:
+      labels:
+        app: fastml-serve
+    spec:
+      containers:
+      - name: fastml-serve
+        image: fastml-serve:latest
+        imagePullPolicy: Never  # Use local image in minikube
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: fastml-serve-config
+              key: LOG_LEVEL
+        - name: MODEL_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: fastml-serve-config
+              key: MODEL_NAME
+        - name: MAX_BATCH_SIZE
+          valueFrom:
+            configMapKeyRef:
+              name: fastml-serve-config
+              key: MAX_BATCH_SIZE
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi" 
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 12  # Allow up to 2 minutes for model loading
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastml-serve-service
+  namespace: fastml-serve
+  labels:
+    app: fastml-serve
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: http
+  selector:
+    app: fastml-serve
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastml-serve-config
+  namespace: fastml-serve
+data:
+  LOG_LEVEL: "INFO"
+  MODEL_NAME: "distilbert-base-uncased-finetuned-sst-2-english"
+  MAX_BATCH_SIZE: "32"
